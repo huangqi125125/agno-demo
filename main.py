@@ -1,6 +1,7 @@
 from agno.agent import Agent
 from agno.models.azure import AzureOpenAI
 from agno.tools.duckduckgo import DuckDuckGoTools
+from agno.tools.googlesearch import GoogleSearchTools
 
 
 def my_agent():
@@ -18,7 +19,7 @@ def my_agent():
                 markdown=True,
                 instructions=my_instructions,
                 add_history_to_messages=True,
-                tools=[DuckDuckGoTools()],
+                tools=[DuckDuckGoTools(), GoogleSearchTools()],
             )
 
             # Print the response on the terminal
