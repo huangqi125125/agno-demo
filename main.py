@@ -1,17 +1,32 @@
-from agno.agent import Agent
+from readline import add_history
+
 from agno.models.anthropic import Claude
+from agno.agent import Agent
+from agno.models.azure import AzureOpenAI
+from os import getenv
+from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.yfinance import YFinanceTools
 
-def main():
+
+def my_agent():
     print("Hello from agno-demo!")
-    agent = Agent(
-        model=Claude(id="claude-sonnet-4-20250514"),
-        tools=[YFinanceTools(stock_price=True)],
-        instructions="Use tables to display data. Don't include any other text.",
-        markdown=True,
-    )
-    agent.print_response("What is the stock price of Apple?", stream=True)
+    my_instructions: list[str] = []
+    while True:
+        user_input = input("请输入: >>\n")
+        if user_input.lower() == "exit":
+            break
+        else:
+            agent = Agent(
+                model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+                markdown=True,
+                instructions=my_instructions,
+                add_history_to_messages=True,
+                tools=[DuckDuckGoTools],
+            )
+
+            # Print the response on the terminal
+            agent.print_response(user_input, stream=True)
 
 
 if __name__ == "__main__":
-    main()
+    my_agent()
