@@ -1,18 +1,13 @@
-from readline import add_history
-
-from agno.models.anthropic import Claude
 from agno.agent import Agent
 from agno.models.azure import AzureOpenAI
-from os import getenv
 from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.tools.yfinance import YFinanceTools
 
 
 def my_agent():
     print("Hello from agno-demo!")
     my_instructions: list[str] = []
     while True:
-        user_input = input("请输入: >>\n")
+        user_input = input("请输入: >> ")
         if user_input.lower() == "exit":
             break
         else:
