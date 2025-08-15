@@ -1,6 +1,6 @@
 from agno.agent import Agent
 from agno.models.azure import AzureOpenAI
-from agno.tools.duckduckgo import DDGS
+from agno.tools.duckduckgo import DuckDuckGoTools
 
 
 def my_agent():
@@ -16,7 +16,7 @@ def my_agent():
                 markdown=True,
                 instructions=my_instructions,
                 add_history_to_messages=True,
-                tools=[DDGS()],
+                tools=[DuckDuckGoTools()],
             )
 
             # Print the response on the terminal
