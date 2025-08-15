@@ -5,7 +5,9 @@ from agno.tools.duckduckgo import DuckDuckGoTools
 
 def my_agent():
     print("Hello from agno-demo!")
-    my_instructions: list[str] = []
+    my_instructions: list[str] = [
+        "if you need to search website for details, just summarize content for answer, don't show me the links"
+    ]
     while True:
         user_input = input("请输入: >> ")
         if user_input.lower() == "exit":
