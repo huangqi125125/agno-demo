@@ -27,4 +27,4 @@ playground = Playground(agents=[search_agent, finance_agent])
 app = playground.get_app()
 
 if __name__ == "__main__":
-    playground.serve("playground:app", reload=True)
+    playground.serve("playground:app", port=7777, reload=True)
