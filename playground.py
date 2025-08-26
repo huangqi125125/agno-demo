@@ -7,9 +7,7 @@ from agno.tools.googlesearch import GoogleSearchTools
 from agno.tools.yfinance import YFinanceTools
 
 agent_storage = SqliteStorage(
-    # store sessions in the ai.sessions table
     table_name="agent_sessions",
-    # db_file: Sqlite database file
     db_file="tmp/data.db",
 )
 
