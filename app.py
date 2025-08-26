@@ -24,18 +24,7 @@ finance_agent = Agent(
     show_tool_calls=True,
 )
 
-agent_team = Team(
-    mode="coordinate",
-    members=[search_agent, finance_agent],
-    model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
-    success_criteria="A comprehensive financial news report with clear sections and data-driven insights.",
-    instructions=["Always include sources", "use tables to display data"],
-    show_tool_calls=True,
-    markdown=True,
-)
-# Print the response on the terminal
-
-playground = Playground(teams=agent_team)
+playground = Playground(agents=[search_agent, finance_agent])
 app = playground.get_app()
 
 if __name__ == "__main__":
