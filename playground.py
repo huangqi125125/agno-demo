@@ -75,7 +75,10 @@ mcp_github_agent = Agent(
 
 mcp_agent = Agent(
     name="Multi MCP Agent",
-    instructions=["You are a assistant."],
+    instructions=[
+        "You are a assistant.",
+        "If the user speak Chinese, you should always answer in Chinese"
+    ],
     model=model,
     storage=agent_storage,
     add_history_to_messages=True,
