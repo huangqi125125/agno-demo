@@ -25,3 +25,7 @@ export GITHUB_ACCESS_TOKEN=""
 ```
 python playground.py
 ```
+
+## Next Learning Plan:
+
+> - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
