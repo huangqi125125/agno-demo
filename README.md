@@ -1,6 +1,9 @@
 > It's a [Agno](https://docs.agno.com/introduction) demo for learning purpose.
 > - Only support Azure OpenAI currently
 > - [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) is required for learning
+> - [Agno-UI](https://docs.agno.com/agent-ui/introduction) is the only UI App
+
+> - [AG-UI](https://github.com/ag-ui-protocol/ag-ui)
 
 # Preparation
 
