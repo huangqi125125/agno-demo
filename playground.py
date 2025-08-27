@@ -94,26 +94,29 @@ file_path = str(Path(__file__).parent.parent.parent.parent)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage MCP connection lifecycle inside a FastAPI app"""
-    global mcp_tools
+    global github_tools
+    global multi_mcp_tools
 
     # Startuplogic: connect to our MCP server
-    mcp_tools = MCPTools(server_params=server_params)
-    mcp_tools = MultiMCPTools(
+    github_tools = MCPTools(server_params=server_params)
+    multi_mcp_tools = MultiMCPTools(
         [
             "uvx mcp-server-git",
             f"npx -y @modelcontextprotocol/server-filesystem {file_path}"
         ]
     )
-    await mcp_tools.connect()
+    await github_tools.connect()
+    await multi_mcp_tools.connect()
 
     # Add the MCP tools to our Agent
-    mcp_github_agent.tools = [mcp_tools]
-    mcp_agent.tools = [mcp_tools]
+    mcp_github_agent.tools = [github_tools]
+    mcp_agent.tools = [multi_mcp_tools]
 
     yield
 
     # Shutdown: Close MCP connection
-    await mcp_tools.close()
+    await github_tools.close()
+    await multi_mcp_tools.close()
 
 
 agent_team = Team(
