@@ -4,7 +4,6 @@ from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.googlesearch import GoogleSearchTools
 from agno.tools.yfinance import YFinanceTools
-from sentry_sdk.tracing_utils import normalize_incoming_data
 
 model = AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3")
 
