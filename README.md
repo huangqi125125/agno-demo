@@ -5,17 +5,23 @@
 
 > - [AG-UI](https://github.com/ag-ui-protocol/ag-ui)
 
-# Preparation
+## Preparation
 
-## Set up Azure OpenAI variables
+### Set up Azure OpenAI variables
 
 ```
 export AZURE_OPENAI_API_KEY=""
 export AZURE_OPENAI_ENDPOINT=""
 ```
 
-## GitHub MCP Server Variables
+### GitHub MCP Server Variables
 
 ```
 export GITHUB_ACCESS_TOKEN=""
+```
+
+## Start Server
+
+```
+python playground.py
 ```
