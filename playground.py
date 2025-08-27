@@ -30,7 +30,7 @@ if not github_token:
 
 server_params = StdioServerParameters(
     command="npx",
-    args=["-y", "@modelcontextprotocol/github-mcp-server", "--toolsets", "all"],
+    args=["-y", "@modelcontextprotocol/server-github"],
 )
 
 search_agent = Agent(
