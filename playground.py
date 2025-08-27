@@ -57,6 +57,18 @@ finance_agent = Agent(
     show_tool_calls=True,
 )
 
+agent_team = Team(
+    name="Finance Team",
+    mode="coordinate",
+    members=[search_agent, finance_agent],
+    model=model,
+    success_criteria="A comprehensive financial news report with clear sections and data-driven insights.",
+    instructions=["Always include sources", "use tables to display data"],
+    show_tool_calls=True,
+    markdown=True,
+)
+
+# MCP
 mcp_github_agent = Agent(
     name="MCP GitHub Agent",
     instructions=dedent("""\
@@ -119,20 +131,9 @@ async def lifespan(app: FastAPI):
     await multi_mcp_tools.close()
 
 
-agent_team = Team(
-    name="Finance Team",
-    mode="coordinate",
-    members=[search_agent, finance_agent],
-    model=model,
-    success_criteria="A comprehensive financial news report with clear sections and data-driven insights.",
-    instructions=["Always include sources", "use tables to display data"],
-    show_tool_calls=True,
-    markdown=True,
-)
-
 playground = Playground(
     app_id="my_playground",
-    agents=[search_agent, finance_agent, mcp_github_agent],
+    agents=[search_agent, finance_agent, mcp_github_agent, mcp_agent],
     teams=[agent_team]
 )
 app = playground.get_app(lifespan=lifespan)
