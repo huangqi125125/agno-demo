@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from os import getenv
+from pathlib import Path
 from textwrap import dedent
 
 from agno.agent import Agent
@@ -9,10 +10,12 @@ from agno.storage.sqlite import SqliteStorage
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.googlesearch import GoogleSearchTools
-from agno.tools.mcp import MCPTools, MultiMCPTools
+from agno.tools.mcp import MultiMCPTools, MCPTools
 from agno.tools.yfinance import YFinanceTools
 from fastapi import FastAPI
 from mcp import StdioServerParameters
+
+model = AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3")
 
 agent_storage = SqliteStorage(
     table_name="agent_sessions",
@@ -20,14 +23,19 @@ agent_storage = SqliteStorage(
     auto_upgrade_schema=True,
 )
 
+# MCP server parameters setup
+github_token = getenv("GITHUB_TOKEN") or getenv("GITHUB_ACCESS_TOKEN")
+if not github_token:
+    raise ValueError("GITHUB_TOKEN environment variable is required")
+
 server_params = StdioServerParameters(
-    command="uvx",
-    args=["mcp-server-git"],
+    command="npx",
+    args=["-y", "@modelcontextprotocol/github-mcp-server", "--toolsets", "all"],
 )
 
 search_agent = Agent(
     name="Search Agent",
-    model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+    model=model,
     markdown=True,
     instructions=[],
     storage=agent_storage,
@@ -39,7 +47,7 @@ search_agent = Agent(
 
 finance_agent = Agent(
     name="Finance Agent",
-    model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+    model=model,
     markdown=True,
     instructions=[],
     storage=agent_storage,
@@ -54,17 +62,29 @@ mcp_github_agent = Agent(
     instructions=dedent("""\
         You are a GitHub assistant. Help users explore repositories and their activity.
 
-        - you should always answer in Chinese
         - Use headings to organize your responses
         - Be concise and focus on relevant information\
     """),
-    model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+    model=model,
     storage=agent_storage,
     add_history_to_messages=True,
     num_history_responses=3,
     add_datetime_to_instructions=True,
     markdown=True,
 )
+
+mcp_agent = Agent(
+    name="Multi MCP Agent",
+    instructions=["You are a assistant."],
+    model=model,
+    storage=agent_storage,
+    add_history_to_messages=True,
+    num_history_responses=3,
+    add_datetime_to_instructions=True,
+    markdown=True,
+)
+
+file_path = str(Path(__file__).parent.parent.parent.parent)
 
 
 # This is required to start the MCP connection correctly in the FastAPI lifecycle
@@ -74,16 +94,18 @@ async def lifespan(app: FastAPI):
     global mcp_tools
 
     # Startuplogic: connect to our MCP server
-    # mcp_tools = MCPTools(server_params=server_params)
+    mcp_tools = MCPTools(server_params=server_params)
     mcp_tools = MultiMCPTools(
         [
             "uvx mcp-server-git",
+            f"npx -y @modelcontextprotocol/server-filesystem {file_path}"
         ]
     )
     await mcp_tools.connect()
 
     # Add the MCP tools to our Agent
     mcp_github_agent.tools = [mcp_tools]
+    mcp_agent.tools = [mcp_tools]
 
     yield
 
@@ -92,6 +114,7 @@ async def lifespan(app: FastAPI):
 
 
 agent_team = Team(
+    name="Finance Team",
     mode="coordinate",
     members=[search_agent, finance_agent],
     model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
