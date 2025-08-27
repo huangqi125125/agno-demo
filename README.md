@@ -1,6 +1,6 @@
 > It's a [Agno](https://docs.agno.com/introduction) sample for learning purpose.
-
-> Only support Azure OpenAI currently
+> - Only support Azure OpenAI currently
+> - [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) is required for learning
 
 # Preparation
 
