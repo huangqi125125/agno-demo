@@ -120,7 +120,7 @@ agent_team = Team(
     name="Finance Team",
     mode="coordinate",
     members=[search_agent, finance_agent],
-    model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+    model=model,
     success_criteria="A comprehensive financial news report with clear sections and data-driven insights.",
     instructions=["Always include sources", "use tables to display data"],
     show_tool_calls=True,
