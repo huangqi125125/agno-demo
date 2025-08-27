@@ -4,6 +4,9 @@ from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.googlesearch import GoogleSearchTools
 from agno.tools.yfinance import YFinanceTools
+from sentry_sdk.tracing_utils import normalize_incoming_data
+
+model = AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3")
 
 
 def my_agent():
@@ -15,7 +18,7 @@ def my_agent():
             break
         else:
             search_agent = Agent(
-                model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+                model=model,
                 markdown=True,
                 instructions=[],
                 add_history_to_messages=True,
@@ -24,7 +27,7 @@ def my_agent():
             )
 
             finance_agent = Agent(
-                model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+                model=model,
                 markdown=True,
                 instructions=[],
                 add_history_to_messages=True,
@@ -35,7 +38,7 @@ def my_agent():
             agent_team = Team(
                 mode="coordinate",
                 members=[search_agent],
-                model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
+                model=model,
                 success_criteria="A comprehensive financial news report with clear sections and data-driven insights.",
                 instructions=["Always include sources", "use tables to display data"],
                 show_tool_calls=True,
