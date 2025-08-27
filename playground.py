@@ -9,7 +9,7 @@ from agno.storage.sqlite import SqliteStorage
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.googlesearch import GoogleSearchTools
-from agno.tools.mcp import MCPTools
+from agno.tools.mcp import MCPTools, MultiMCPTools
 from agno.tools.yfinance import YFinanceTools
 from fastapi import FastAPI
 from mcp import StdioServerParameters
@@ -20,17 +20,13 @@ agent_storage = SqliteStorage(
     auto_upgrade_schema=True,
 )
 
-# MCP server parameters setup
-github_token = getenv("GITHUB_TOKEN") or getenv("GITHUB_ACCESS_TOKEN")
-if not github_token:
-    raise ValueError("GITHUB_TOKEN environment variable is required")
-
 server_params = StdioServerParameters(
-    command="npx",
-    args=["-y", "@modelcontextprotocol/server-github"],
+    command="uvx",
+    args=["mcp-server-git"],
 )
 
 search_agent = Agent(
+    name="Search Agent",
     model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
     markdown=True,
     instructions=[],
@@ -42,6 +38,7 @@ search_agent = Agent(
 )
 
 finance_agent = Agent(
+    name="Finance Agent",
     model=AzureOpenAI(id="o3", api_version="2025-01-01-preview", azure_deployment="o3"),
     markdown=True,
     instructions=[],
@@ -57,6 +54,7 @@ mcp_github_agent = Agent(
     instructions=dedent("""\
         You are a GitHub assistant. Help users explore repositories and their activity.
 
+        - you should always answer in Chinese
         - Use headings to organize your responses
         - Be concise and focus on relevant information\
     """),
@@ -76,7 +74,12 @@ async def lifespan(app: FastAPI):
     global mcp_tools
 
     # Startuplogic: connect to our MCP server
-    mcp_tools = MCPTools(server_params=server_params)
+    # mcp_tools = MCPTools(server_params=server_params)
+    mcp_tools = MultiMCPTools(
+        [
+            "uvx mcp-server-git",
+        ]
+    )
     await mcp_tools.connect()
 
     # Add the MCP tools to our Agent
@@ -100,10 +103,10 @@ agent_team = Team(
 
 playground = Playground(
     app_id="my_playground",
-    agents=[search_agent, mcp_github_agent],
+    agents=[search_agent, finance_agent, mcp_github_agent],
     teams=[agent_team]
 )
 app = playground.get_app(lifespan=lifespan)
 
 if __name__ == "__main__":
-    playground.serve("my_playground:app", port=7777, reload=True)
+    playground.serve("playground:app", port=7777, reload=True)
