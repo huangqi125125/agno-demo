@@ -3,8 +3,6 @@
 > - [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) is required for learning
 > - [Agno-UI](https://docs.agno.com/agent-ui/introduction) is the only UI App
 
-> - [AG-UI](https://github.com/ag-ui-protocol/ag-ui)
-
 ## Preparation
 
 ### Set up Azure OpenAI variables
@@ -29,3 +27,4 @@ python playground.py
 ## Next Learning Plan:
 
 > - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
+> - [AG-UI](https://github.com/ag-ui-protocol/ag-ui)
